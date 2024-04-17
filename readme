@@ -1,4 +1,4 @@
-Gradient Boost Tree in C++ 20:
+Gradient Boost Tree in C++ 17:
 	- Regression
 	- Multiclasse Classification boost trees
 	- Multiclasse Classification Adaboost trees.
@@ -25,21 +25,9 @@ Current Limitations / to do list :
 - add c++ dataframe integration ?
 https://github.com/hosseinmoein/DataFrame/tree/master
 
-Make Log :
-	m -rf build
-	mkdir -p build
-	g++ -g -o build/conf.o cpp/conf.cpp -I/usr/include/python3.10 -I/usr/include/python3.10  -Wno-unused-result -Wsign-compare -g      -fstack-protector-strong -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -fPIC -c -std=c++20 -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DBOOST_ALLOW_DEPRECATED_HEADERS
-	g++ -g -o build/criterion.o cpp/criterion.cpp -I/usr/include/python3.10 -I/usr/include/python3.10  -Wno-unused-result -Wsign-compare -g      -fstack-protector-strong -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -fPIC -c -std=c++20 -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DBOOST_ALLOW_DEPRECATED_HEADERS
-	g++ -g -o build/factories.o cpp/factories.cpp -I/usr/include/python3.10 -I/usr/include/python3.10  -Wno-unused-result -Wsign-compare -g      -fstack-protector-strong -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -fPIC -c -std=c++20 -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DBOOST_ALLOW_DEPRECATED_HEADERS
-	g++ -g -o build/gbt.o cpp/gbt.cpp -I/usr/include/python3.10 -I/usr/include/python3.10  -Wno-unused-result -Wsign-compare -g      -fstack-protector-strong -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -fPIC -c -std=c++20 -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DBOOST_ALLOW_DEPRECATED_HEADERS
-	g++ -g -o build/lltrees.o cpp/lltrees.cpp -I/usr/include/python3.10 -I/usr/include/python3.10  -Wno-unused-result -Wsign-compare -g      -fstack-protector-strong -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -fPIC -c -std=c++20 -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DBOOST_ALLOW_DEPRECATED_HEADERS
-	g++ -g -o build/metrics.o cpp/metrics.cpp -I/usr/include/python3.10 -I/usr/include/python3.10  -Wno-unused-result -Wsign-compare -g      -fstack-protector-strong -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -fPIC -c -std=c++20 -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DBOOST_ALLOW_DEPRECATED_HEADERS
-	g++ -g -o build/node.o cpp/node.cpp -I/usr/include/python3.10 -I/usr/include/python3.10  -Wno-unused-result -Wsign-compare -g      -fstack-protector-strong -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -fPIC -c -std=c++20 -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DBOOST_ALLOW_DEPRECATED_HEADERS
-	g++ -g -o build/threadpool.o cpp/threadpool.cpp -I/usr/include/python3.10 -I/usr/include/python3.10  -Wno-unused-result -Wsign-compare -g      -fstack-protector-strong -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -fPIC -c -std=c++20 -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DBOOST_ALLOW_DEPRECATED_HEADERS
-	g++ -g -o build/tree.o cpp/tree.cpp -I/usr/include/python3.10 -I/usr/include/python3.10  -Wno-unused-result -Wsign-compare -g      -fstack-protector-strong -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -fPIC -c -std=c++20 -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DBOOST_ALLOW_DEPRECATED_HEADERS
-	g++ -g -o build/wrapper.o cpp/wrapper.cpp -I/usr/include/python3.10 -I/usr/include/python3.10  -Wno-unused-result -Wsign-compare -g      -fstack-protector-strong -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O2 -Wall -fPIC -c -std=c++20 -DBOOST_BIND_GLOBAL_PLACEHOLDERS -DBOOST_ALLOW_DEPRECATED_HEADERS
-	g++ -g -o build/lltrees.so build/conf.o build/criterion.o build/factories.o build/gbt.o build/lltrees.o build/metrics.o build/node.o build/threadpool.o build/tree.o build/wrapper.o -L/usr/lib/python3.10/config-3.10-x86_64-linux-gnu -L/usr/lib/x86_64-linux-gnu  -lcrypt -ldl  -lm -lm  -shared -Wl,-rpath,/usr/lib  -lpython3.10 -lboost_python310 -lboost_numpy310
-	
+Make  :
+	!cd ../ && make clean
+    !cd ../ && make
 	
 FIT/PREDICT Log :
 -----------------------------------------
