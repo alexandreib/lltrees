@@ -16,7 +16,7 @@ all: build
 build: $(TARGETS)
 
 $(TARGETS) : $(OBJECTS)
-	$(CC) -o $@ $^ $(PY_LDFLAGS) -lpython3.10 -lboost_python38 -lboost_numpy38
+	$(CC) -o $@ $^ $(PY_LDFLAGS) -lpython3.10 -lboost_python310 -lboost_numpy310
 
 $(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp
 	$(CC) -o $@ $^ $(PY_CFLAGS) -std=c++17 $(BOOST)
