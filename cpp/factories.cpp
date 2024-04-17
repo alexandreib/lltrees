@@ -18,8 +18,8 @@ base_gbt * regression_factory::Gbt()
 
 base_gbt * classification_factory::Gbt() 
 {
-    if (conf::mode == "classification")     
-        return new classification();
+    if (conf::mode == "adaboost_classification")     
+        return new adaboost_classification();
     if (conf::mode == "classic_classification")     
         return new classic_classification();
     {std::cout <<  __PRETTY_FUNCTION__ << std::endl; __builtin_unreachable(); }

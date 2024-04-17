@@ -81,25 +81,24 @@ public:
     {
         std::unique_ptr<base_factory> factory  = base_factory::get_instance();  
         std::unique_ptr<XY> x = factory->Data(np_X);
-        this->gbt->predict(*x);
-        return x->get_pred();
+        return this->gbt->predict(*x);
     }
 
     boost::python::numpy::ndarray predict_proba(boost::python::numpy::ndarray const & np_X) 
     {
         std::unique_ptr<base_factory> factory  = base_factory::get_instance();  
         std::unique_ptr<XY> x = factory->Data(np_X);
-        return x->get_proba();
+        return this->gbt->predict_proba(*x);
     }
 
     boost::python::numpy::ndarray get_residuals() 
     {
-        boost::python::numpy::ndarray result = boost::python::numpy::from_data(this->gbt->residuals_average.data(),  
+        std::vector<double>residuals = this->gbt->get_residuals();
+        return boost::python::numpy::from_data(residuals.data(),
                                 boost::python::numpy::dtype::get_builtin<double>(),  
-                                boost::python::make_tuple(this->gbt->residuals_average.size()), 
+                                boost::python::make_tuple(residuals.size()), 
                                 boost::python::make_tuple(sizeof(double)), 
-                                boost::python::object());  
-        return result.copy();
+                                boost::python::object()).copy();
     }
 
     void save() 

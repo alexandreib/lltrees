@@ -16,19 +16,17 @@ int number_of_classes;
 void set_x(const boost::python::numpy::ndarray & np_x);
 std::vector<double> get_column(const int index_col);
 std::vector<double> get_column(const int index_col, const std::vector<int>& index) const;
-boost::python::numpy::ndarray get_proba();
+
+const std::vector<double> & get_vector_proba() const;
 
 template<class T>
 T* get_y() const;
 
 template<class T>
 void set_pred(std::vector<T> preds);
-// void push_proba(std::vector<double> probas);
 
-// Y
 virtual void set_y(const boost::python::numpy::ndarray & np_y) = 0;
 virtual void set_xy(const boost::python::numpy::ndarray & np_x, const boost::python::numpy::ndarray & np_y) = 0;
-virtual boost::python::numpy::ndarray get_pred() = 0;
 };
 
 template<class T>
@@ -40,9 +38,11 @@ Y(const boost::python::numpy::ndarray & np_x);
 Y(const boost::python::numpy::ndarray & np_x, const boost::python::numpy::ndarray & np_y);
 ~Y() ;
 T* y = NULL;
-std::vector<T> pred;
+std::vector<T> pred; 
+// for regression : pred => double
+// for classification : pred => int
+// also for classification : using derived class, with pred double for probability
 
 void set_y(const boost::python::numpy::ndarray & np_y) override;
 void set_xy(const boost::python::numpy::ndarray & np_x, const boost::python::numpy::ndarray & np_y) override;
-boost::python::numpy::ndarray get_pred() override;
 };

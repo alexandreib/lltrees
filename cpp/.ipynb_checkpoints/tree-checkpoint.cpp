@@ -3,6 +3,7 @@
 #include <thread> 
 #include <iostream>
 #include <fstream>
+#include <map>
 #include "tree.hpp"
 #include "conf.hpp"
 
@@ -85,7 +86,7 @@ void tree<T>::fit(node<T> & pnode,
     }
     else
     {
-        pnode.set_node_value(Y, index);
+        pnode.set_node_value(tr, Y, index);
     }
 }
 
@@ -187,50 +188,16 @@ U tree<T>::predict_row(const node<T> & pnode, const double * row) const
     }
 }
 template std::vector<int> tree<int>::predict(const XY & d) const; 
-template std::vector<std::unordered_map<int, double>> tree<int>::predict(const XY & d) const; 
+template std::vector<std::map<int, double>> tree<int>::predict(const XY & d) const; 
 template std::vector<double> tree<double>::predict(const XY & d) const; 
 
 template int tree<int>::predict_row(const double * row) const;
-template std::unordered_map<int, double> tree<int>::predict_row(const double * row) const;
+template std::map<int, double> tree<int>::predict_row(const double * row) const;
 template double tree<double>::predict_row(const double * row) const;
 
 template int tree<int>::predict_row(const node<int> & pnode, const double * row) const;
-template std::unordered_map<int, double> tree<int>::predict_row(const node<int> & pnode, const double * row) const;
+template std::map<int, double> tree<int>::predict_row(const node<int> & pnode, const double * row) const;
 template double tree<double>::predict_row(const node<double> & pnode, const double * row) const; 
-
-template<> 
-void tree<double>::pred_and_add(const XY & d, std::vector<double> & pred) 
-{
-    for (int index_row = 0; index_row < d.number_of_rows; index_row ++)
-    {
-        pred[index_row] += conf::gbt::learning_rate * this->predict_row<double>(d.x + index_row * d.number_of_cols);
-    }
-}
-template<> 
-void tree<int>::pred_and_add(const XY & d, std::vector<double> & pred) 
-{
-    __builtin_unreachable();
-}
-
-template<> 
-void tree<int>::pred_and_add(const XY & d, std::vector<std::unordered_map<int, double>> & pred, const double & model_weight) 
-{
-    for (int index_row = 0; index_row < d.number_of_rows; index_row ++)
-    {
-        std::unordered_map<int, double> tree_pred = this->predict_row<std::unordered_map<int, double>>(d.x + index_row * d.number_of_cols);
-        for (auto & map_row_pred : pred[index_row]) 
-        {
-            pred[index_row][map_row_pred.first] += model_weight * tree_pred[map_row_pred.first];
-        }
-    }
-    
-}
-
-template<> 
-void tree<double>::pred_and_add(const XY & d, std::vector<std::unordered_map<int, double>> & pred, const double & model_weight)  
-{
-    __builtin_unreachable();
-}
 
 // Print Area
 template<class T> 

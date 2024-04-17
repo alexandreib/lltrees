@@ -5,6 +5,7 @@
 #include <string>
 #include <set> 
 #include <vector>
+#include <cmath>
 #include "wrapper.hpp"
 #include "tree.hpp"
 
@@ -12,25 +13,23 @@
 class base_gbt 
 {
 public:
-std::vector<double> residuals_average; 
+inline void print_epoch_log(int & epoch, double & metric_tr, double & metric_va, double residuals = 0.0 );
 
 virtual ~base_gbt() = default;
 virtual void print() = 0;
 virtual void save() = 0;
 virtual void load() = 0;
-virtual void fit(const XY & tr, const XY & va) = 0;
-virtual void predict(XY & ts) = 0;
+virtual void fit(XY & tr, const XY & va) = 0;
+virtual boost::python::numpy::ndarray predict(const XY & ts) = 0;
 
-// Classification Virtual :
-virtual std::vector<int> extract_pred_from_proba(const std::vector<std::unordered_map<int, double>> probas) const {std::cout <<  __PRETTY_FUNCTION__ << std::endl; __builtin_unreachable(); };
-virtual std::vector<std::unordered_map<int, double>>  get_proba(const XY & d, const std::vector<double> models_weights) const {std::cout <<  __PRETTY_FUNCTION__ << std::endl; __builtin_unreachable(); };
-virtual std::vector<std::unordered_map<int, double>>  get_proba(const XY & d) const {std::cout <<  __PRETTY_FUNCTION__ << std::endl; __builtin_unreachable(); };
-virtual void predict_proba(XY & d)  {std::cout <<  __PRETTY_FUNCTION__ << std::endl; __builtin_unreachable(); };
-virtual std::unordered_map<int, double> init_map_from_clases() const  {std::cout <<  __PRETTY_FUNCTION__ << std::endl; __builtin_unreachable(); };
-virtual std::vector<int> get_predict(const XY & d, const std::vector<double> models_weights) const  {std::cout <<  __PRETTY_FUNCTION__ << std::endl; __builtin_unreachable(); };
+virtual boost::python::numpy::ndarray predict_proba(const XY & d) {std::cout <<  __PRETTY_FUNCTION__ << std::endl; __builtin_unreachable(); };
+
+virtual std::vector<double> get_residuals() const {std::cout <<  __PRETTY_FUNCTION__ << std::endl; __builtin_unreachable(); };
+
+virtual std::vector<double> get_proba(const XY & d) const {std::cout <<  __PRETTY_FUNCTION__ << std::endl; __builtin_unreachable(); };
+
 virtual std::vector<int> get_predict(const XY & d) const  {std::cout <<  __PRETTY_FUNCTION__ << std::endl; __builtin_unreachable(); };
 
-void print_epoch_log(int & epoch, double & metric_tr, double & metric_va, double & mean_residuals );
 };
 
 template<class T> 
@@ -46,39 +45,54 @@ void save() override;
 void load() override; 
 };
 
-class regression : public gbt<double>
+class abstract_classification  
 {
-private:
+protected:
+std::set<int> classes; 
 public: 
-void fit(const XY & tr, const XY & va) override;
-void predict(XY & ts) override;
+inline std::vector<double> softmax(std::vector<double> odds) const;
+inline std::vector<int> extract_pred_from_proba(const std::vector<double> probas) const;
 };
 
-class classification : public gbt<int>
+class abstract_classic_boost : public gbt<double>
+{
+protected:
+std::vector<double> residuals_saved; 
+public: 
+std::vector<double> get_residuals() const override;
+};
+
+class regression : public abstract_classic_boost
 {
 private:
-std::set<int> classes; 
-std::vector<double> models_weights;
-public: 
-void fit(const XY & tr, const XY & va) override;
-void predict(XY & ts) override;
 
-std::vector<int> extract_pred_from_proba(const std::vector<std::unordered_map<int, double>> probas) const override;
-std::vector<std::unordered_map<int, double>>  get_proba(const XY & d, const std::vector<double> models_weights) const override;
-std::vector<std::unordered_map<int, double>>  get_proba(const XY & d) const override;
-void predict_proba(XY & d) override;
-std::unordered_map<int, double> init_map_from_clases() const override;
-std::vector<int> get_predict(const XY & d, const std::vector<double> models_weights) const override;
+public: 
+void fit(XY & tr, const XY & va) override;
+boost::python::numpy::ndarray predict(const XY & ts) override;
+};
+
+class adaboost_classification : public gbt<int>, public abstract_classification
+{
+private:
+std::vector<double> models_weights;
+
+public: 
+void fit(XY & tr, const XY & va) override;
+boost::python::numpy::ndarray predict(const XY & ts) override;
+boost::python::numpy::ndarray predict_proba(const XY & d) override;
 std::vector<int> get_predict(const XY & d) const override;
+std::vector<double>  get_proba(const XY & d) const override;
+
 };
 
-class classic_classification : public gbt<double>
+class classic_classification : public abstract_classification, public abstract_classic_boost
 {
 private:
-std::set<int> classes; 
-std::vector<double> models_weights;
+std::vector<double> log_odds_classes; 
 
 public :
-void fit(const XY & tr, const XY & va) override;
-void predict(XY & ts) {};
+void fit(XY & tr, const XY & va) override;
+boost::python::numpy::ndarray predict(const XY & d) override;
+boost::python::numpy::ndarray predict_proba(const XY & d) override;
+std::vector<double>  get_proba(const XY & d) const override;
 };

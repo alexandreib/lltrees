@@ -1,4 +1,6 @@
+#include <map>
 #include "node.hpp"
+#include "conf.hpp"
 
 template <class T> 
 void node<T>::set_children(node<T>* left, node<T>* right) 
@@ -61,7 +63,7 @@ int node<int>::get_leaf_value() const
 
 template<> 
 template<> 
-std::unordered_map<int, double> node<int>::get_leaf_value() const
+std::map<int, double> node<int>::get_leaf_value() const
 {
     return this->probas;
 }
@@ -75,14 +77,25 @@ template double node<int>::get_leaf_value() const;
 template std::unordered_map<int, double> node<int>::get_leaf_value() const; 
 
 template<> 
-void node<double>::set_node_value(const std::vector<double>& Y, const std::vector<int>& index) 
+void node<double>::set_node_value(const XY & tr, const std::vector<double>& Y, const std::vector<int>& index) 
 {
-    double average = 0;
+    double sum = 0;
     for(auto const &index_row : index)
     {
-        average = average + Y[index_row];
+        sum = sum + Y[index_row];
     }                
-    this->leaf_value = average / index.size(); 
+
+    double div = index.size();
+    if (conf::mode == "classic_classification") // Not beautiful
+    {
+        const std::vector<double> & proba =  tr.get_vector_proba();
+        div = 0;
+        for(auto const &index_row : index)
+        {
+            div = div + proba[index_row] * ( 1 - proba[index_row] );
+        }   
+    }
+    this->leaf_value = sum / div; 
 }
 
 template<> 
@@ -112,11 +125,11 @@ void node<int>::set_probas(const std::vector<int>& Y, const std::vector<int>& in
 }
 
 template<> 
-void node<int>::set_node_value(const std::vector<int>& Y, const std::vector<int>& index) 
+void node<int>::set_node_value(const XY & tr, const std::vector<int>& Y, const std::vector<int>& index) 
 {
     this->set_probas(Y, index);
     double max_proba = 0;
-    for (const auto& pair : this->probas) 
+    for (const auto & pair : this->probas) 
     { 
         if (pair.second > max_proba) 
         { 
@@ -124,8 +137,6 @@ void node<int>::set_node_value(const std::vector<int>& Y, const std::vector<int>
             this->leaf_value = pair.first; 
         } 
     }  
-    this->proba = max_proba;
-    this->odd = max_proba/(1-max_proba);
 }
 
 template class node<int>;  // Explicit instantiation

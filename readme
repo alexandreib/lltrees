@@ -6,7 +6,6 @@ https://www.boost.org/
 Regression, and Multi Classification simple boosted tree.
 
 
-
 Current Limitations / to do list :
 - no categorical data.
 - features importances
@@ -15,18 +14,10 @@ Current Limitations / to do list :
 https://github.com/hosseinmoein/DataFrame/tree/master
 
 
-
-FPGA deployment for the moment: WIP.
-- AXI4 lite bus to load rows, done.
-- AXI4 lite bus to load parameters, to do.
-The goal is to develop the load/predict in the FPGA (not the fit/save...).
-
-
 dirs :
     cpp : sources of the gbt.
     demo : exemple python notebook and python file to run a regression with the library.
     build : output of makefile (*.o, *.so).
-    fpga : fpga vivado project.
 
 Better results than sklean DecisionTreeRegressor, and GradientBoostingRegressor.
 

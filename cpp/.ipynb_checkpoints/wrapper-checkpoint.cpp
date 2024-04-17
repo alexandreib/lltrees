@@ -23,20 +23,10 @@ void XY::set_pred(std::vector<T> preds)
 template void XY::set_pred(std::vector<int>); // explicit instantiation.
 template void XY::set_pred(std::vector<double>); // explicit instantiation.
 
-// void XY::push_proba(std::vector<double> probas)
-// {
-//     Y<double>* subclass = static_cast<Y<double>*>(this);
-//     subclass->pred.insert(subclass->pred.end(), probas, probas + this->number_of_rows);
-// }
-
-boost::python::numpy::ndarray XY::get_proba()
+const std::vector<double> & XY::get_vector_proba() const
 {
-    Y<double>* subclass = static_cast<Y<double>*>(this);
-    auto * const data_ptr = subclass->pred.data();
-    boost::python::tuple shape = boost::python::make_tuple(subclass->pred.size(), this->number_of_classes);
-    boost::python::tuple stride = boost::python::make_tuple(sizeof(double) * this->number_of_classes, sizeof(double));
-    boost::python::numpy::dtype dt = boost::python::numpy::dtype::get_builtin<double>();
-    return boost::python::numpy::from_data(data_ptr, dt, shape, stride, boost::python::object());
+    const Y<double> * subclass = static_cast<const Y<double>*>(this);
+    return subclass->pred;
 }
 
 void XY::set_x(const boost::python::numpy::ndarray & np_x)
@@ -102,19 +92,8 @@ void Y<T>::set_y(const boost::python::numpy::ndarray & np_y)
 template <class T> 
 void Y<T>::set_xy(const boost::python::numpy::ndarray & np_x, const boost::python::numpy::ndarray & np_y)
 {
-    // assert((std::is_same_v<np_x.shape(0), np_y.shape(0)>) && "sizes do not match");
     this->set_x(np_x);
     this->set_y(np_y);
-}
-
-template <class T> 
-boost::python::numpy::ndarray Y<T>::get_pred()
-{
-    return boost::python::numpy::from_data(this->pred.data(),
-            boost::python::numpy::dtype::get_builtin<T>(), 
-            boost::python::make_tuple(this->pred.size()), 
-            boost::python::make_tuple(sizeof(T)), 
-            boost::python::object());
 }
 
 template class Y<int>;// Explicit instantiation

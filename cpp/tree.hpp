@@ -47,13 +47,10 @@ template<class U>
 std::vector<U> predict(const XY & d) const;
     
 template<class U> 
-U predict_row(const double * row) const;
-    
-template<class U> 
 U predict_row(const node<T> & pnode, const double * row) const;
 
-void pred_and_add(const XY & d, std::vector<double> & pred);
-void pred_and_add(const XY & d, std::vector<std::unordered_map<int, double>> & pred, const double & model_weight);
+template<class U> 
+U predict_row(const double * row) const;
     
 // Print Area
 void print_node_0();
