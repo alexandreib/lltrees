@@ -210,7 +210,7 @@ void adaboost_classification::fit(XY & tr, const XY & va)
                 loss[idx] = -1;                
             }
         }
-        double alpha = std::log((1-err) / err); // * 0.5; // * std::log(this->classes.size()-1);
+        double alpha = std::log((1-err) / err) * 0.5;//std::log(this->classes.size()-1);
         this->trees.push_back(my_tree);
         this->models_weights.push_back(alpha);
         
@@ -253,17 +253,14 @@ std::vector<double> adaboost_classification::get_proba(const XY & d) const
                     row_pred[idx_classe] += model_weight;
                 }
             }
-        } 
-
-        row_pred = softmax(row_pred);
+        }
         for (auto proba : row_pred) {preds.push_back(proba);}        
     }
-    return preds;
+    return this->softmax(preds);
 }
 
 boost::python::numpy::ndarray adaboost_classification::predict_proba(const XY & d) 
 {
-    std::cout <<__PRETTY_FUNCTION__ << std::endl;
     std::vector<double> probas = this->get_proba(d);
     const double * data_ptr = probas.data();
     boost::python::tuple shape = boost::python::make_tuple(d.number_of_rows, this->classes.size());
@@ -274,34 +271,12 @@ boost::python::numpy::ndarray adaboost_classification::predict_proba(const XY & 
 
 std::vector<int> adaboost_classification::get_predict(const XY & d) const
 {
-    std::vector<int> preds (d.number_of_rows);
-    
-    for (int index_row = 0; index_row < d.number_of_rows; index_row ++)
-    {
-        std::vector<double> row_pred (this->classes.size());
-        for (long unsigned int model_idx = 0; model_idx < this->models_weights.size(); model_idx ++)
-        {
-            double model_weight = models_weights[model_idx];     
-            tree<int>* my_tree =  this->trees[model_idx];
-            for(auto classe : this->classes)
-            {
-                auto idx_classe = std::distance(this->classes.begin(), this->classes.find(classe));
-                int tree_pred = my_tree->predict_row<int>(d.x + index_row * d.number_of_cols);
-                
-                if (tree_pred == classe ) 
-                {
-                    row_pred[idx_classe] += model_weight;
-                }
-            }
-        }      
-        preds[index_row] = *std::next(this->classes.begin(), std::distance(row_pred.begin(), std::max_element(row_pred.begin(), row_pred.end())));        
-    }
-    return preds;
+    std::vector<double> probas = this->get_proba(d);
+    return this->extract_pred_from_proba(probas);
 }
 
 boost::python::numpy::ndarray adaboost_classification::predict(const XY & d) 
 {
-    std::cout <<__PRETTY_FUNCTION__ << std::endl;
     std::vector<int> preds = this->get_predict(d);
     return boost::python::numpy::from_data(preds.data(),
                                                 boost::python::numpy::dtype::get_builtin<int>(), 
