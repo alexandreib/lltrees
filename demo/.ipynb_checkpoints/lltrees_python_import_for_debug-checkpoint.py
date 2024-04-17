@@ -50,7 +50,6 @@ print("PREDICT --- %s seconds ---" % (time.time() - start_time))
 
 print("accuracy_score: %.2f" % np.sqrt(sklearn.metrics.accuracy_score(Y_test,YP)))
 print(np.unique(YP, return_counts=True))
-
 del my_lltree
 
 time.sleep(0.5)
@@ -90,9 +89,13 @@ print("r2: %.2f" % sklearn.metrics.r2_score(Y_test,YP))
 
 my_lltree.save()
 my_lltree.print()
-
-
 del my_lltree
+
+
+time.sleep(0.5)
+X, Y = sklearn.datasets.make_classification(n_samples=1000, n_features=8, n_informative=5, n_classes=2, random_state=40)
+X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, test_size=0.3, random_state=42)
+
 my_lltree = lltrees.lltree()
 my_lltree.set_conf(conf)
 my_lltree.get_conf()
