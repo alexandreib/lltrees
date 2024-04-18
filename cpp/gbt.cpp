@@ -28,6 +28,7 @@ gbt<T>::~gbt()
         delete p;
     } 
     this->trees.clear();
+    conf::idx_cat_cols.clear();
 }
 
 template<class T>
@@ -51,8 +52,15 @@ void gbt<T>::save()
         << conf::gbt::metric_name << ":" 
         << conf::gbt::epochs << ":"  
         << conf::gbt::learning_rate << ":" 
-        << conf::number_of_threads  << "\n";
-    myfile << conf::tree::max_depth << ":"  << conf::tree::min_leaf_size << "\n";
+        << conf::number_of_threads  << ":"
+        << conf::tree::max_depth << ":"  
+        << conf::tree::min_leaf_size << "\n";
+
+    for (auto idx : conf::idx_cat_cols) 
+    {
+        myfile << idx << ":";
+    } myfile << "\n";
+    
     for (long unsigned int i =0; i < this->trees.size(); i++)
     {
         this->trees[i]->save(myfile);
@@ -68,6 +76,7 @@ void gbt<T>::load()
     std::string delimiter = ":";
     std::string line;
     std::getline(myfile, line);
+    
     std::string token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     conf::verbose = std::stoi(token);
@@ -88,18 +97,31 @@ void gbt<T>::load()
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     conf::gbt::learning_rate = std::stod(token);
-    
-    token = line.substr(0, line.find(delimiter));
-    conf::number_of_threads = std::stoi(token);
 
-    std::getline(myfile, line);
+    token = line.substr(0, line.find(delimiter));
+    line.erase(0, token.size() + delimiter.size());
+    conf::number_of_threads = std::stoi(token);
+      
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     conf::tree::max_depth = std::stoi(token);
-
+      
     token = line.substr(0, line.find(delimiter));
+    line.erase(0, token.size() + delimiter.size());
     conf::tree::min_leaf_size = std::stoi(token);
-    
+
+    std::getline(myfile, line);
+    while (true)
+    {    
+        token = line.substr(0, line.find(delimiter));
+        if (!token.empty())
+        {
+            line.erase(0, token.size() + delimiter.size());
+            conf::idx_cat_cols.push_back( std::stoi(token) );
+        }
+        else
+            break;        
+    }
     while (std::getline(myfile, line))
     {             
         tree<T>* my_tree = new tree<T>();

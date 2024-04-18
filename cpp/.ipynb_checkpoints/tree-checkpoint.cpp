@@ -112,7 +112,8 @@ void tree<T>::split(node<T> & pnode,
     }
     std::sort(unique_sorted.begin(), unique_sorted.end());
     unique_sorted.erase(std::unique(unique_sorted.begin(), unique_sorted.end()), unique_sorted.end());
-    
+
+    bool cat_col = std::find(conf::idx_cat_cols.begin(), conf::idx_cat_cols.end(), index_col) != conf::idx_cat_cols.end();
     if (unique_sorted.size() !=1 ) 
     {
         for(long unsigned int idx = 0; idx < unique_sorted.size() -1 ; idx++) 
@@ -121,9 +122,13 @@ void tree<T>::split(node<T> & pnode,
             std::vector<int> local_l_index, local_r_index;
             for(auto const &index_row : index) 
             {
-                if (tr.x[index_row * tr.number_of_cols + index_col] <= threshold) 
+                if (cat_col && tr.x[index_row * tr.number_of_cols + index_col] == threshold)
                 {
                     local_l_index.push_back( index_row ); 
+                }
+                else if (tr.x[index_row * tr.number_of_cols + index_col] <= threshold)
+                {
+                     local_l_index.push_back( index_row ); 
                 }
                 else 
                 { 

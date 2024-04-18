@@ -4,6 +4,7 @@ Gradient Boost Tree in C++ 17:
 	- Multiclasse Classification Adaboost trees.
 
 
+
 Demo / Jupyter notebook in demo Directory.
 
 Python wrapper using Boost C++ libraries.
@@ -19,7 +20,6 @@ dirs/files :
 Current Limitations / to do list :
 - can't use gini /Entropy criterion with Classic Boosted Tree.
 - Need to had flexible path for save / load of the Trees.
-- no categorical data.
 - features importances
 - add adaboost regression
 - add c++ dataframe integration ?

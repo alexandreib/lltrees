@@ -5,6 +5,7 @@ namespace conf
     int number_of_threads = std::thread::hardware_concurrency();
     int verbose = 0;
     std::string mode = "regression";
+    std::list <int> idx_cat_cols;
 
     namespace tree 
     {

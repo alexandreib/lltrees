@@ -1,11 +1,14 @@
 #include <string>
 #include <thread> 
+#include <list>
 
 namespace conf
 {
     extern int number_of_threads;
     extern int verbose;
     extern std::string mode;
+    extern std::string mode;
+    extern std::list <int> idx_cat_cols;
 
     namespace tree 
     {
