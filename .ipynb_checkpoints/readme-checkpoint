@@ -16,8 +16,8 @@ dirs/files :
 	demo : exemple python notebook and python file to run a regression with the library.
 	build : output of makefile (*.o, *.so).
 
-
 Current Limitations / to do list :
+- Save load working only for regression for the moment.
 - can't use gini /Entropy criterion with Classic Boosted Tree.
 - Need to had flexible path for save / load of the Trees.
 - features importances
@@ -38,14 +38,17 @@ metric :            accuracy
 criterion :         absolute_error
 max_depth :         1
 min_leaf_size :     1
+idx_cat_cols :      [8, ]
 verbose :           1
 -----------------------------------------
+
 Type of Training Data : int32
 Configuration mode : classic_classification
 Gbt_classic_classification fit
 All the distinct element for classification in sorted order are: 0 1 
 Epoch : 1     Metric Train : 0.82    Metric va : 0.826667 Residuals (sum) : 699.589
 Epoch : 2     Metric Train : 0.82    Metric va : 0.826667 Residuals (sum) : 530.876
+
 Print.
 Tree : 0
 └──1, criterion: 0.499853, size: 700
@@ -73,8 +76,10 @@ metric :            mae
 criterion :         absolute_error
 max_depth :         1
 min_leaf_size :     2
+idx_cat_cols :      [8, ]
 verbose :           1
 -----------------------------------------
+
 Type of Training Data : float64
 Configuration mode : regression
 Epoch : 1     Metric Train : 93.5679 Metric va : 101.676 Residuals (sum) : -508.197
@@ -82,6 +87,7 @@ Epoch : 2     Metric Train : 90.6867 Metric va : 98.9202 Residuals (sum) : -457.
 Epoch : 3     Metric Train : 88.4611 Metric va : 96.1682 Residuals (sum) : -411.64
 Epoch : 4     Metric Train : 86.1242 Metric va : 94.5949 Residuals (sum) : -370.476
 Epoch : 5     Metric Train : 84.1233 Metric va : 92.273  Residuals (sum) : -333.428
+
 Print.
 Tree : 0
 └──1, criterion: 95.8068, size: 700
