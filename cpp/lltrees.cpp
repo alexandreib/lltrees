@@ -36,6 +36,7 @@ public:
             if (key == "idx_cat_cols") { boost::python::list idx_cat_fe = boost::python::extract<boost::python::list>(kv[1]);
                                          for (int i = 0; i < len(idx_cat_fe); ++i) conf::idx_cat_cols.push_back(boost::python::extract<int>(idx_cat_fe[i]));
                                         }
+            if (key == "number_of_threads") { conf::number_of_threads = boost::python::extract<int>(kv[1]);}
             if (key == "verbose") { conf::verbose = boost::python::extract<int>(kv[1]);}
         }    
     }
@@ -51,6 +52,7 @@ public:
         std::cout << std::setw(20) << "max_depth : " << conf::tree::max_depth << std::endl;
         std::cout << std::setw(20) << "min_leaf_size : " << conf::tree::min_leaf_size << std::endl;
         std::cout << std::setw(20) << "idx_cat_cols : " << "[" ; for (auto idx : conf::idx_cat_cols) std::cout << idx << ", "; std::cout << "]" << std::endl;
+        std::cout << std::setw(20) << "number_of_threads : " << conf::number_of_threads  << std::endl;
         std::cout << std::setw(20) << "verbose : " << std::boolalpha << conf::verbose << std::endl;
         std::cout << "-----------------------------------------" << std::endl;
     }
