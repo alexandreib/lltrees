@@ -86,7 +86,7 @@ void node<double>::set_node_value(const XY & tr, const std::vector<double>& Y, c
     }                
 
     double div = index.size();
-    if (conf::mode == "classic_classification") // Not beautiful
+    if (conf::mode == "classic_classification") 
     {
         const std::vector<double> & proba =  tr.get_vector_proba();
         div = 0;
@@ -96,6 +96,7 @@ void node<double>::set_node_value(const XY & tr, const std::vector<double>& Y, c
         }   
     }
     this->leaf_value = sum / div; 
+    // std::cout << "this->leaf_value : "  << this->leaf_value << std::endl;
 }
 
 template<> 
@@ -121,6 +122,7 @@ void node<int>::set_probas(const std::vector<int>& Y, const std::vector<int>& in
     for (auto const &prob : this->probas) 
     {
         this->probas[prob.first] = (double) prob.second /  (double) index.size();
+        // std::cout << prob.first << ":"<< this->probas[prob.first] << std::endl;
     }
 }
 

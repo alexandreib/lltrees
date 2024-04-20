@@ -42,7 +42,9 @@ gbt();
 ~gbt();
 void print() override;
 void save() override;
+void save(std::ofstream & file);
 void load() override; 
+void load(std::ifstream & file);
 };
 
 class abstract_classification  
@@ -65,7 +67,6 @@ std::vector<double> get_residuals() const override;
 class regression : public abstract_classic_boost
 {
 private:
-
 public: 
 void fit(XY & tr, const XY & va) override;
 boost::python::numpy::ndarray predict(const XY & ts) override;
@@ -77,6 +78,8 @@ private:
 std::vector<double> models_weights;
 
 public: 
+void save() override;
+void load() override;
 void fit(XY & tr, const XY & va) override;
 boost::python::numpy::ndarray predict(const XY & ts) override;
 boost::python::numpy::ndarray predict_proba(const XY & d) override;
@@ -89,8 +92,9 @@ class classic_classification : public abstract_classification, public abstract_c
 {
 private:
 std::vector<double> log_odds_classes; 
-
 public :
+void save() override;
+void load() override;
 void fit(XY & tr, const XY & va) override;
 boost::python::numpy::ndarray predict(const XY & d) override;
 boost::python::numpy::ndarray predict_proba(const XY & d) override;

@@ -44,8 +44,15 @@ void gbt<T>::print()
 ///////////////////////////////// Save / Load ////////////////////////////////
 template<class T>
 void gbt<T>::save() 
-{    
+{
     std::ofstream myfile("trees.txt");
+    this->save(myfile);
+    myfile.close();
+}
+
+template<class T>
+void gbt<T>::save(std::ofstream & myfile) 
+{    
     myfile << conf::verbose << ":"  
         << conf::mode << ":"  
         << conf::tree::criterion_name << ":"  
@@ -60,19 +67,96 @@ void gbt<T>::save()
     {
         myfile << idx << ":";
     } myfile << "\n";
-    
+
+
     for (long unsigned int i =0; i < this->trees.size(); i++)
     {
         this->trees[i]->save(myfile);
         myfile << "\n";
     }
+}
+
+void classic_classification::save() 
+{
+
+    std::ofstream myfile("trees.txt");
+    for (auto classe : this->classes) 
+    {
+        myfile << classe << ":";
+    } myfile << "\n";
+    
+    gbt<double>::save(myfile);
     myfile.close();
 }
 
-template<class T>
-void gbt<T>::load() 
-{    
+void classic_classification::load() 
+{
     std::ifstream myfile("trees.txt");
+    std::string delimiter = ":";
+    std::string line;
+    std::getline(myfile, line);
+    while (true)
+    {    
+        std::string token = line.substr(0, line.find(delimiter));
+        if (!token.empty())
+        {
+            line.erase(0, token.size() + delimiter.size());
+            this->classes.insert( std::stoi(token) );
+        // std::cout<<token <<" ";
+        }
+        else
+            break;        
+    }
+    gbt<double>::load(myfile);
+    myfile.close();
+    this->print();
+}
+
+void adaboost_classification::save() 
+{
+
+    std::ofstream myfile("trees.txt");
+    for (auto classe : this->classes) 
+    {
+        myfile << classe << ":";
+    } myfile << "\n";
+    
+    gbt<int>::save(myfile);
+    myfile.close();
+}
+
+void adaboost_classification::load() 
+{
+    std::ifstream myfile("trees.txt");
+    std::string delimiter = ":";
+    std::string line;
+    std::getline(myfile, line);
+    while (true)
+    {    
+        std::string token = line.substr(0, line.find(delimiter));
+        if (!token.empty())
+        {
+            line.erase(0, token.size() + delimiter.size());
+            this->classes.insert( std::stoi(token) );
+        // std::cout<<token <<" ";
+        }
+        else
+            break;        
+    }
+    gbt<int>::load(myfile);
+    myfile.close();
+    this->print();
+}
+template<class T>
+void gbt<T>::load()
+{   
+    std::ifstream myfile("trees.txt");
+    this->load(myfile);
+    myfile.close();
+}
+template<class T>
+void gbt<T>::load(std::ifstream & myfile)
+{    
     std::string delimiter = ":";
     std::string line;
     std::getline(myfile, line);
@@ -80,35 +164,44 @@ void gbt<T>::load()
     std::string token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     conf::verbose = std::stoi(token);
+    // std::cout << "gbt 1" << std::endl;
 
     conf::mode = line.substr(0, line.find(delimiter));
     line.erase(0, conf::mode.size() + delimiter.size());
+    // std::cout << "gbt 2" << std::endl;
     
     conf::tree::criterion_name = line.substr(0, line.find(delimiter));
     line.erase(0, conf::tree::criterion_name.size() + delimiter.size());
+    // std::cout << "gbt 3" << std::endl;
     
     conf::gbt::metric_name = line.substr(0, line.find(delimiter));
     line.erase(0, conf::gbt::metric_name.size() + delimiter.size());
+    // std::cout << "gbt 4" << std::endl;
     
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     conf::gbt::epochs = std::stoi(token);
+    // std::cout << "gbt 5" << std::endl;
 
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     conf::gbt::learning_rate = std::stod(token);
+    // std::cout << "gbt 6" << std::endl;
 
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     conf::number_of_threads = std::stoi(token);
+    // std::cout << "gbt 7" << std::endl;
       
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     conf::tree::max_depth = std::stoi(token);
+    // std::cout << "gbt 8" << std::endl;
       
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     conf::tree::min_leaf_size = std::stoi(token);
+    // std::cout << "gbt 9" << std::endl;
 
     std::getline(myfile, line);
     while (true)
@@ -121,14 +214,14 @@ void gbt<T>::load()
         }
         else
             break;        
-    }
+    }    
+
     while (std::getline(myfile, line))
     {             
         tree<T>* my_tree = new tree<T>();
         my_tree->load(line);
         this->trees.push_back(my_tree);
     }
-    myfile.close();
 }
 
 

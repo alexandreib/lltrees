@@ -122,13 +122,10 @@ void tree<T>::split(node<T> & pnode,
             std::vector<int> local_l_index, local_r_index;
             for(auto const &index_row : index) 
             {
-                if (cat_col && tr.x[index_row * tr.number_of_cols + index_col] == threshold)
+                if ((cat_col && tr.x[index_row * tr.number_of_cols + index_col] == threshold) ||
+                    (tr.x[index_row * tr.number_of_cols + index_col] <= threshold) )
                 {
                     local_l_index.push_back( index_row ); 
-                }
-                else if (tr.x[index_row * tr.number_of_cols + index_col] <= threshold)
-                {
-                     local_l_index.push_back( index_row ); 
                 }
                 else 
                 { 
@@ -249,35 +246,67 @@ void tree<T>::load(node<T> *& pnode, std::string & line)
         return;
     }    
     int id_node = std::stoi(token);
+    // std::cout<< "0"<<std::endl;
     
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     bool isleaf = (bool)std::stoi(token);
+    // std::cout<< "1"<<std::endl;
 
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     int level = std::stoi(token);
+    // std::cout<< "2"<<std::endl;
        
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     int size = std::stoi(token);
+    // std::cout<< "3"<<std::endl;
     
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     int index_col = std::stoi(token);
+    // std::cout<< "4"<<std::endl;
 
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     double impurity = std::stod(token);
+    // std::cout<< "5"<<std::endl;
 
     token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + delimiter.size());
     double threshold = std::stod(token);
+    // std::cout<< "6"<<std::endl;
     
-    token = line.substr(0, line.find(","));
+    token = line.substr(0, line.find(delimiter));
     line.erase(0, token.size() + 1);
     double leaf_value = std::stod(token);
+    // std::cout<< "leaf_value"<< leaf_value << std::endl;
 
+    std::map<int, double> probas; 
+    // std::cout<< "@"<<std::endl;
+    while (true)
+    {    
+        token = line.substr(0, line.find(delimiter));
+        if (token == ":") 
+        {
+            
+    std::cout<<"token" << std::endl;
+            line.erase(0, token.size() + delimiter.size());
+            int key = std::stoi(token) ;
+    std::cout<<"key" << key<<std::endl;
+            
+            token = line.substr(0, line.find(delimiter));
+            line.erase(0, token.size() + delimiter.size());
+            double element = std::stod(token) ;
+    std::cout<<"double" << key<<std::endl;
+            probas.insert({key, element});
+            
+        }
+        else
+            break;        
+    }
+    
     pnode = new node<T>(size, impurity);
     pnode->id_node = id_node;
     pnode->isleaf = isleaf;
@@ -285,7 +314,11 @@ void tree<T>::load(node<T> *& pnode, std::string & line)
     pnode->index_col = index_col;
     pnode->threshold = threshold;
     pnode->leaf_value = leaf_value;
+    pnode->probas = probas;
     
+    token = line.substr(0, line.find("/"));
+    line.erase(0, token.size() + delimiter.size());
+    std::cout<< "load node passed "<< line << std::endl;
     this->load(pnode->l_node, line );
     this->load(pnode->r_node, line );
 }
@@ -308,8 +341,15 @@ void tree<T>::save(const node<T> * pnode, std::ofstream & file)
     if (pnode == NULL) { file << "#:";  return ;}    
     {
         file << pnode->id_node << ":" << pnode->isleaf << ":" << pnode->level << ":" << pnode->size << ":" 
-            << pnode->index_col << ":" << pnode->impurity << ":" << pnode->threshold << ":" << pnode->leaf_value
-            << ",";
+            << pnode->index_col << ":" << pnode->impurity << ":" << pnode->threshold << ":" << pnode->leaf_value << ":";
+        
+            // std::cout << pnode->leaf_value << "**************" <<std::endl; 
+        for  (auto proba : pnode->probas )
+        {
+            file << proba.first << ":" << proba.second << ":";
+            std::cout << proba.first << ":" << proba.second << ":"; 
+        }
+        file << "/";
     }
     this->save(pnode->l_node, file);
     this->save(pnode->r_node, file);
