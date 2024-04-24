@@ -4,32 +4,55 @@
 	- Multiclasse Classification Adaboost trees.
 
 
-Demo / Jupyter notebook in demo Directory.
-
-Python wrapper using Boost C++ libraries.
+### Python wrapper using Boost C++ libraries.
 https://www.boost.org/
 
-dirs/files :
+### dirs/files :
 	MakeFile 
 	cpp : sources of the gbt.
-	demo : exemple python notebook and python file to run a regression with the library.
+	demo : exemple jupyter notebook and python file to run a regression with the library.
 	build : output of makefile (*.o, *.so).
 
-Current Limitations / to do list :
-- Save load working only for regression for the moment.
-- can't use gini /Entropy criterion with Classic Boosted Tree.
-- Need to had flexible path for save / load of the Trees.
-- features importances
-- add adaboost regression
-- add c++ dataframe integration ?
-https://github.com/hosseinmoein/DataFrame/tree/master
 
-Make  :
+
+# Build the C++ / .so library :
 	!cd ../ && make clean
-    !cd ../ && make
-	
+	!cd ../ && make
+
+# Configuration / Usage :
+## Configuration is done with a python Dictionnary :
+```
+conf ={
+	'mode' : 'adaboost_classification',
+	'epochs' : 2,
+	'learning_rate' : 1,
+	'metric' : 'accuracy',
+	'max_depth' : 1,
+	'min_leaf_size' : 1,
+	'criterion' : "gini",  
+	'verbose' : 1,
+	'idx_cat_cols' : [8],
+	'number_of_threads' : 8,
+}
+my_lltree.set_conf(conf)
+```
+
+mode : regression, classic_classification, adaboost_classification. <br/>
+epochs : numbers of trees to fit. <br/>
+learning_rate : self explaining. <br/>
+metric : accuracy, mse, mae. limitation : can't use gini /Entropy criterion with Classic Boosted Tree. <br/>
+max_depth : max depth of each tree.<br/>
+min_leaf_size : minimum number of samples in each leaf. <br/>
+criterion : criterion used of the split, possible values : variance, absolute_erorr, gini, entropy. <br/>
+verbose : log at each epoch : 0 => no log. <br/>
+idx_cat_cols : index of the categoricals columns in the datasets. <br/>
+number_of_threads : numbers of thread used to fit the trees. <br/>
+
+
+
+## Python logs examples :
 FIT/PREDICT Log :
------------------------------------------
+```-----------------------------------------
 mode :              classic_classification
 epochs :            2
 learning_rate :     0.3
@@ -66,7 +89,8 @@ Tree : 3
     ├──2, criterion: 0.220046, leaf_value: 1.03154, size: 349
     └──3, criterion: 0.245805, leaf_value: -1.1206, size: 351
     
-    
+```
+```
 -----------------------------------------
 mode :              regression
 epochs :            5
@@ -130,3 +154,13 @@ Tree : 4
 └──1, criterion: 86.0214, size: 700
     ├──2, criterion: 74.8719, leaf_value: -56.9211, size: 339
     └──3, criterion: 77.6908, leaf_value: 44.216, size: 361
+```
+
+# Current Limitations / to do list :
+	- Save load working only for regression for the moment.
+	- can't use gini /Entropy criterion with Classic Boosted Tree.
+	- Need to had flexible path for save / load of the Trees.
+	- features importances
+	- add adaboost regression
+	- add c++ dataframe integration ?
+	https://github.com/hosseinmoein/DataFrame/tree/master
