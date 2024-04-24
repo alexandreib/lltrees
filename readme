@@ -1,8 +1,7 @@
-Gradient Boost Tree in C++ 17:
+# Gradient Boost Tree in C++ 17:
 	- Regression
 	- Multiclasse Classification boost trees
 	- Multiclasse Classification Adaboost trees.
-
 
 
 Demo / Jupyter notebook in demo Directory.
